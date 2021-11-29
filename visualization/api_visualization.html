@@ -1,0 +1,167 @@
+<div id="input_block">
+    <!-- <input type="file" id="input" , onchange="draw_tree()"> -->
+  
+    <form action="javascript:;" onsubmit="call_api(this)">
+      <select id="input_select" name="input_select">
+      </select>
+      <input type="submit" value="Draw">
+    </form>
+  
+    <form action="index.php">
+      <input type="submit" value="Clear">
+    </form>
+  </div>
+    
+    <div id="taxonomy_viz"></div>
+    <style>
+      body {
+        background-color: #fff;
+      }
+    
+      .node {
+        stroke: #fff;
+        stroke-width: 1.5px;
+      }
+    
+      .link {
+        stroke: #999;
+        stroke-width: 2px;
+      }
+    
+      #arrowhead {
+        stroke-width: 1px;
+      }
+    
+      #input_block {
+        position: fixed;
+        top: 1em;
+        left: 1em;
+      }
+    </style>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" charset="utf-8"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" charset="utf-8"></script>
+    <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    
+    <script>
+      var select = $("#input_select");
+      $.getJSON("your address:5020/api/visualize/file_list", function(data) {
+        $(data).each(function() {
+          select.append($("<option>").attr("value", this).text(this.replace(/\.[^/.]+$/, "")));
+        });
+      });
+  
+      function call_api(form) {
+        $.getJSON("your address:5020/api/visualize?filename=" + form['input_select'].value, function (data) {
+        var width = 10000,
+          height = 10000;
+        var color = d3.scale.category10();
+    
+        var svg = d3.select("#taxonomy_viz").select("svg")
+        if (svg.empty()) {
+          svg = d3.select("#taxonomy_viz").append("svg")
+            .attr("width", width)
+            .attr("height", height);
+        }
+    
+        // d3.json(filename, function(error, graph) {
+        var force = d3.layout.force()
+          .charge(-500)
+          .linkDistance(100)
+          .size([width, height])
+          .nodes(data.nodes)
+          .links(data.links)
+          .start();
+    
+        var link = svg.selectAll(".link")
+          .data(data.links)
+          .enter().append("line")
+          .attr("class", "link")
+          // .attr('marker-end', 'url(#arrowhead)')
+          .style("stroke", function(d) {
+            return color(d.group);
+          })
+          .style("pointer-events", "none");
+    
+        var node = svg.selectAll(".node")
+          .data(data.nodes)
+          .enter().append("g")
+          .attr("class", "node")
+          .append("circle")
+          .style("fill", function(d) {
+            return color(d.group);
+          })
+          .attr("r", 15)
+          .call(force.drag);
+    
+        var nodelabels = svg.selectAll(".nodelabel")
+          .data(data.nodes)
+          .enter()
+          .append("text")
+          .attr({
+            "x": function(d) {
+              return d.x;
+            },
+            "y": function(d) {
+              return d.y;
+            },
+            "class": "nodelabel",
+            "stroke": "black"
+          })
+          .text(function(d) {
+            return d.label;
+          });
+    
+        svg.append('defs').append('marker')
+          .attr({
+            'id': 'arrowhead',
+            'viewBox': '-0 -5 10 10',
+            'refX': 25,
+            'refY': 0,
+            //'markerUnits':'strokeWidth',
+            'orient': 'auto',
+            'markerWidth': 10,
+            'markerHeight': 10,
+            'xoverflow': 'visible'
+          })
+          .append('svg:path')
+          .attr('d', 'M 0,-5 L 10 ,0 L 0,5')
+          .attr('fill', '#ccc')
+          .attr('stroke', '#ccc');
+    
+        force.on("tick", function() {
+    
+          link.attr({
+            "x1": function(d) {
+              return d.source.x;
+            },
+            "y1": function(d) {
+              return d.source.y;
+            },
+            "x2": function(d) {
+              return d.target.x;
+            },
+            "y2": function(d) {
+              return d.target.y;
+            }
+          });
+    
+          node.attr({
+            "cx": function(d) {
+              return d.x;
+            },
+            "cy": function(d) {
+              return d.y;
+            }
+          });
+    
+          nodelabels.attr("x", function(d) {
+              return d.x;
+            })
+            .attr("y", function(d) {
+              return d.y;
+            });
+        });
+        // });
+      })};
+    </script>

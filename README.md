@@ -59,3 +59,11 @@ After running TaxoGen, you can convert the results to a networkx graph `hierarch
 Then you can compare the extracted taxonomy using `py evaluation/taxogen_evaluation --standard_graph [the ACM or Europa networkx pickle] --graph hierarchy_nx.pickle --clusters clusters.pickle --out [your output path]` and obtain a csv file summarizing it. 
 You can also you the `--random` argument to generate the results of a random taxonomy using the same topics. 
 
+### Visualization
+
+For using the visualization script `visualization/api/fastapi.py`, you need to split your `Subsumption` pickle object using the `visualization/simplify_pickles.ipynb` notebook. 
+
+The visualization of a taxonomy constructed around an entry point topic can be realized through the `visualization\api.html` file after running the `visualization\api\fastapi.py` fastapi. 
+This last file has to be modified according your setup and the parameters of the taxonomy construction can be directly modified in the `taxonomy` function parameters. 
+
+In order to reproduced the visualization in the paper, the topics we generated from S2ORC are in `data/topics/topics-dkpe.txt`. 

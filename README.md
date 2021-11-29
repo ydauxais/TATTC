@@ -11,7 +11,7 @@ Because even the parsed are too large to be stored on this repository, please re
 
 #### Pre-processing
 
-To preprocess the S2ORC dataset, you can use the [s2orc_preprocess notebook](preprocess/s2orc_preprocess.ipynb) in the `preprocess` repository by modifying the filenames to your system. 
+To preprocess the S2ORC dataset, you can use the cells of the `Extract S2ORC data` section in the [s2orc_preprocess notebook](preprocess/s2orc_preprocess.ipynb) in the `preprocess` repository by modifying the filenames to your system. 
 The folder of interest will remain `full/metadata` in the S2ORC folder hierarchy.  
 
 It will generate you two files, the first one to represent the abstracts + titles of the paper and the second to represent their metadata. 
@@ -32,4 +32,8 @@ The `data` argument is for the file containing on each line the titles + abstrac
 The `topics` argument is for the file listing the different topics to use it corresponds to the ACM and Europa topic files or our generated topics that are in the `data` folder. 
 The output will generate two files, one with the suffix `_subsumption.pickle` containing the `Subsumption` object and one with the suffix `_vectorizer.pickle` containing the `CountVectorizer` used to process the abstracts. 
 
-To use the evaluation notebooks, you can simplify the `Subsumption` object into its subobjects using the [knowledge/simplify_pickles.ipynb](knowledge/simplify_pickles.ipynb). 
+After that you can use the rest of the [s2orc_preprocess notebook](preprocess/s2orc_preprocess.ipynb) to generate the rest of the matrices. 
+
+### Evaluation
+
+TBW
